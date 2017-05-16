@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Screen Mirror</string>
+    <string name="connectButton">CONNECT</string>
+    <string name="defaultMessage">Place for received message</string>
+</resources>
