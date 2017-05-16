@@ -1,0 +1,10 @@
+/*
+!.gitignore
+
+!build.gradle
+!app/
+app/*
+!app/src/
+!app/build.gradle
+
+
