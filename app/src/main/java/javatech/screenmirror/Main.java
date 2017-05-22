@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
 public class Main extends Activity {
 
     private static final int PORT =50268;
-    private static final String HOST="192.168.0.59";
+    private static final String HOST="192.168.1.4";
     private static final String DEBUG="debug";
 
     @Override
@@ -31,10 +31,10 @@ public class Main extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
     }
 
-    public void connectToPC(){
+
+    public void connectToPC(View view){
         new Thread() {
             public void run() {
                 String messageToSend = "hi server\n";
