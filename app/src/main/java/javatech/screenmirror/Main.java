@@ -3,6 +3,10 @@ package javatech.screenmirror;
 
 import android.app.Activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,51 +22,73 @@ import java.net.Socket;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 public class Main extends Activity {
 
-    private static final int PORT =50268;
-    private static final String HOST="192.168.1.4";
-    private static final String DEBUG="debug";
+    @BindView(R.id.connect)
+    Button connectButton;
 
+    @BindView(R.id.message)
+    TextView mess;
+
+    MyReceiver myReceiver;
+
+    static boolean IS_CONNECTED;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+       // setMyReceiver();
+       // setButton();
     }
 
-
-    public void connectToPC(View view){
-        new Thread() {
-            public void run() {
-                String messageToSend = "hi server\n";
-
-                Socket client = null;
-                try
-                {
-                    Log.i(DEBUG, "before connection");
-                    client = new Socket(HOST, PORT);
-                    Log.i(DEBUG, "after connection");
-
-                    BufferedWriter bufferedWriter=new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
-                    bufferedWriter.write(messageToSend);
-                    bufferedWriter.flush();
-
-                    BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(client.getInputStream()));
-                    Log.i(DEBUG, "message from server "+ bufferedReader.readLine());
-                    System.out.println("message from server "+ bufferedReader.readLine());
-
-                    Log.i(DEBUG, "client has ended");
-
-                } catch (
-                        IOException e)
-                {
-                    Log.e(DEBUG, e.getMessage());
-                }
-
+    private void setButton(){
+        connectButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                startConnection();
             }
-        }.start();
+        });
+
     }
+
+    @OnClick(R.id.connect)
+    public void connect(){
+        IS_CONNECTED=true;
+        startConnection();
+    }
+
+    @OnClick(R.id.disconnect)
+    public void disconnect(){
+        IS_CONNECTED=false;
+    }
+
+    private void startConnection(){
+        Intent intent=new Intent(this, ClientService.class);
+        startService(intent);
+    }
+
+    private void setMyReceiver(){
+        myReceiver=new MyReceiver();
+        IntentFilter intentFilter=new IntentFilter();
+        intentFilter.addAction(ClientService.SEND);
+        registerReceiver(myReceiver, intentFilter);
+    }
+    /* protected  void onStop(){
+         unregisterReceiver(myReceiver);
+         super.onStop();
+     }
+ */
+    private class MyReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message=intent.getStringExtra("DATA_PASS");
+            mess.setText(message);
+        }
+    }
+
 }
