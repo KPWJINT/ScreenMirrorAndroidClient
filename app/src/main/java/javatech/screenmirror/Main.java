@@ -41,18 +41,7 @@ public class Main extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-       // setMyReceiver();
-       // setButton();
-    }
-
-    private void setButton(){
-        connectButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                startConnection();
-            }
-        });
-
+        setMyReceiver();
     }
 
     @OnClick(R.id.connect)
@@ -77,15 +66,11 @@ public class Main extends Activity {
         intentFilter.addAction(ClientService.SEND);
         registerReceiver(myReceiver, intentFilter);
     }
-    /* protected  void onStop(){
-         unregisterReceiver(myReceiver);
-         super.onStop();
-     }
- */
-    private class MyReceiver extends BroadcastReceiver{
 
+    private class MyReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.i("DEBUG", "receiver got messs");
             String message=intent.getStringExtra("DATA_PASS");
             mess.setText(message);
         }
