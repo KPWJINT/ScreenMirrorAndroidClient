@@ -19,15 +19,17 @@ import butterknife.OnClick;
 
 public class Main extends Activity {
 
-    static boolean IS_CONNECTED;
+    @BindView(R.id.buttonConnect)
+    Button buttonConnect;
 
-    @BindView(R.id.connect)
-    Button connectButton;
+    @BindView(R.id.textViewReceived)
+    TextView textViewReceived;
 
-    @BindView(R.id.message)
-    TextView mess;
+    @BindView(R.id.buttonDisconnect)
+    TextView buttonDisconnect;
 
     BroadcastReceiver broadcastReceiver;
+    ClientThread clientThread = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,22 +41,6 @@ public class Main extends Activity {
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("com.javatech.screenshot"));
     }
 
-    @OnClick(R.id.connect)
-    public void connect(){
-        IS_CONNECTED=true;
-        startConnection();
-    }
-
-    @OnClick(R.id.disconnect)
-    public void disconnect(){
-        IS_CONNECTED=false;
-    }
-
-    private void startConnection(){
-        ClientThread clientThread = new ClientThread(this);
-        clientThread.start();
-    }
-
     private BroadcastReceiver createBroadcastReceiver() {
         return new BroadcastReceiver() {
             @Override
@@ -64,10 +50,31 @@ public class Main extends Activity {
         };
     }
 
+    @OnClick(R.id.buttonConnect)
+    public void connect(){
+        if(clientThread == null)
+        {
+            startConnection();
+        }else if(!clientThread.isActive())
+        {
+            clientThread.resumeClient();
+        }
+    }
+
+    @OnClick(R.id.buttonDisconnect)
+    public void disconnect(){
+        if(clientThread != null)
+            clientThread.stopClient();
+    }
+
+    private void startConnection(){
+        clientThread = new ClientThread(this);
+        clientThread.start();
+    }
+
     private void updateResults(String text)
     {
-        mess.setText(text);
-        Log.i("DEBUG", "message from server to send to activity: "+text);
+        textViewReceived.setText(text);
     }
 
     @Override
