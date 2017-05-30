@@ -3,66 +3,85 @@ package javatech.screenmirror;
 
 import android.app.Activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.Socket;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
+import butterknife.OnClick;
 
 public class Main extends Activity {
 
-    private static final int PORT =50268;
-    private static final String HOST="192.168.1.4";
-    private static final String DEBUG="debug";
+    @BindView(R.id.buttonConnect)
+    Button buttonConnect;
+
+    @BindView(R.id.textViewReceived)
+    TextView textViewReceived;
+
+    @BindView(R.id.buttonDisconnect)
+    TextView buttonDisconnect;
+
+    BroadcastReceiver broadcastReceiver;
+    ClientThread clientThread = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        broadcastReceiver = createBroadcastReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("com.javatech.screenshot"));
     }
 
-
-    public void connectToPC(View view){
-        new Thread() {
-            public void run() {
-                String messageToSend = "hi server\n";
-
-                Socket client = null;
-                try
-                {
-                    Log.i(DEBUG, "before connection");
-                    client = new Socket(HOST, PORT);
-                    Log.i(DEBUG, "after connection");
-
-                    BufferedWriter bufferedWriter=new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
-                    bufferedWriter.write(messageToSend);
-                    bufferedWriter.flush();
-
-                    BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(client.getInputStream()));
-                    Log.i(DEBUG, "message from server "+ bufferedReader.readLine());
-                    System.out.println("message from server "+ bufferedReader.readLine());
-
-                    Log.i(DEBUG, "client has ended");
-
-                } catch (
-                        IOException e)
-                {
-                    Log.e(DEBUG, e.getMessage());
-                }
-
+    private BroadcastReceiver createBroadcastReceiver() {
+        return new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                updateResults(intent.getStringExtra("result"));
             }
-        }.start();
+        };
+    }
+
+    @OnClick(R.id.buttonConnect)
+    public void connect(){
+        if(clientThread == null)
+        {
+            startConnection();
+        }else if(!clientThread.isActive())
+        {
+            clientThread.resumeClient();
+        }
+    }
+
+    @OnClick(R.id.buttonDisconnect)
+    public void disconnect(){
+        if(clientThread != null)
+            clientThread.stopClient();
+    }
+
+    private void startConnection(){
+        clientThread = new ClientThread(this);
+        clientThread.start();
+    }
+
+    private void updateResults(String text)
+    {
+        textViewReceived.setText(text);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (broadcastReceiver != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+        }
+        super.onDestroy();
     }
 }
