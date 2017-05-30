@@ -45,12 +45,19 @@ public class ClientThread extends Thread {
 
     private void runClientSocket() throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        String messegeFromServer = bufferedReader.readLine();
+        for(int i = 0; i < 50; i++)
+        {
+            String messegeFromServer = bufferedReader.readLine();
 
-        Intent intent = new Intent("com.javatech.screenshot");
-        intent.putExtra("result", messegeFromServer);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
+            Intent intent = new Intent("com.javatech.screenshot");
+            intent.putExtra("result", messegeFromServer);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+            try {
+                Thread.sleep(TIMEOUT);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         bufferedReader.close();
     }
 
