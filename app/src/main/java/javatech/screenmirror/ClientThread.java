@@ -28,7 +28,6 @@ public class ClientThread extends Thread {
     @Override
     public void run() {
         try {
-            createClientSocket(TIMEOUT);
             runClientSocket();
             closeClient();
         } catch (IOException e) {
@@ -36,34 +35,28 @@ public class ClientThread extends Thread {
         }
     }
 
-
-    private void createClientSocket(int timeout) throws IOException {
-        if(clientSocket==null) {
-            clientSocket = new Socket(HOST, PORT);
-        }
-    }
-
     private void runClientSocket() throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
         for(int i = 0; i < 50; i++)
         {
-            String messegeFromServer = bufferedReader.readLine();
+                clientSocket = new Socket(HOST, PORT);
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                String messegeFromServer = bufferedReader.readLine();
 
-            Intent intent = new Intent("com.javatech.screenshot");
-            intent.putExtra("result", messegeFromServer);
-            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                Intent intent = new Intent("com.javatech.screenshot");
+                intent.putExtra("result", messegeFromServer);
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                bufferedReader.close();
             try {
                 Thread.sleep(TIMEOUT);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        bufferedReader.close();
+
     }
 
     private void closeClient() throws IOException {
         clientSocket.close();
     }
-
-
 }
