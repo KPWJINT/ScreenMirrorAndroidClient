@@ -7,10 +7,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -22,11 +25,12 @@ public class Main extends Activity {
     @BindView(R.id.buttonConnect)
     Button buttonConnect;
 
-    @BindView(R.id.textViewReceived)
-    TextView textViewReceived;
 
     @BindView(R.id.buttonDisconnect)
     TextView buttonDisconnect;
+
+    @BindView(R.id.imageViewScreenshot)
+    ImageView imageViewScreenshot;
 
     BroadcastReceiver broadcastReceiver;
     ClientThread clientThread = null;
@@ -39,13 +43,16 @@ public class Main extends Activity {
 
         broadcastReceiver = createBroadcastReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("com.javatech.screenshot"));
+
+        //remove
+        imageViewScreenshot.setImageResource(R.drawable.icon4);
     }
 
     private BroadcastReceiver createBroadcastReceiver() {
         return new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                updateResults(intent.getStringExtra("result"));
+                updateResults(intent.getByteArrayExtra("result"));
             }
         };
     }
@@ -72,9 +79,11 @@ public class Main extends Activity {
         clientThread.start();
     }
 
-    private void updateResults(String text)
+
+    private void updateResults(byte[] screenshotInByte)
     {
-        textViewReceived.setText(text);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(screenshotInByte, 0, screenshotInByte.length);
+        imageViewScreenshot.setImageBitmap(bitmap);
     }
 
     @Override

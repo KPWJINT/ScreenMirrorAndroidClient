@@ -14,23 +14,22 @@
     android:layout_marginTop="16dp"
     android:text="@string/connectButton" />
 
-<TextView
-    android:id="@+id/textViewReceived"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@+id/buttonConnect"
-    android:layout_centerHorizontal="true"
-    android:layout_marginTop="59dp"
-    android:text="I am waiting" />
-
     <Button
         android:id="@+id/buttonDisconnect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/buttonConnect"
-        android:layout_alignRight="@+id/buttonConnect"
-        android:layout_below="@+id/textViewReceived"
-        android:layout_marginTop="36dp"
-        android:text="disconnect" />
+        android:layout_marginTop="62dp"
+        android:text="disconnect"
+        android:layout_below="@+id/buttonConnect"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:id="@+id/imageViewScreenshot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonDisconnect"
+        android:layout_marginTop="137dp"
+        android:layout_alignLeft="@+id/buttonConnect"
+        android:layout_alignStart="@+id/buttonConnect" />
 
 </RelativeLayout>

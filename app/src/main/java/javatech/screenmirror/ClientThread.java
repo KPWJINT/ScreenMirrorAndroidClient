@@ -4,14 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.net.Socket;
 
 public class ClientThread extends Thread {
 
-    private static final int PORT =50268;
-    private static final String HOST="172.16.11.83";
+    private static final int PORT =81;
+    private static final String HOST="192.168.1.4"; //172.16.11.83
     private final int TIMEOUT = 1000;
 
     private Socket clientSocket =null;
@@ -54,17 +56,26 @@ public class ClientThread extends Thread {
     private void runClientSocket() throws IOException, InterruptedException
     {
         clientSocket = new Socket(HOST, PORT);
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        String messageFromServer = bufferedReader.readLine();
 
-        broadcastDataToUI(messageFromServer);
+        DataInputStream dis = new DataInputStream(clientSocket.getInputStream());
+        byte[] screenshotInByte = null;
+        int length = dis.readInt();                    // read length of incoming message
+        if(length>0)
+        {
+            screenshotInByte = new byte[length];
+            dis.readFully(screenshotInByte, 0, screenshotInByte.length); // read the message
+        }
+        dis.close();
 
-        bufferedReader.close();
+        if(screenshotInByte != null)
+            broadcastDataToUI(screenshotInByte);
+
 
         Thread.sleep(TIMEOUT);
     }
 
-    private void broadcastDataToUI(String data)
+
+    private void broadcastDataToUI(byte[] data)
     {
         Intent intent = new Intent("com.javatech.screenshot");
         intent.putExtra("result", data);
