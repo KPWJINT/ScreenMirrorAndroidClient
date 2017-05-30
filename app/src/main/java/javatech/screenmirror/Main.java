@@ -8,24 +8,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.Socket;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-
 public class Main extends Activity {
+
+    static boolean IS_CONNECTED;
 
     @BindView(R.id.connect)
     Button connectButton;
@@ -33,15 +27,16 @@ public class Main extends Activity {
     @BindView(R.id.message)
     TextView mess;
 
-    MyReceiver myReceiver;
+    BroadcastReceiver broadcastReceiver;
 
-    static boolean IS_CONNECTED;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        setMyReceiver();
+
+        broadcastReceiver = createBroadcastReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("com.javatech.screenshot"));
     }
 
     @OnClick(R.id.connect)
@@ -56,24 +51,30 @@ public class Main extends Activity {
     }
 
     private void startConnection(){
-        Intent intent=new Intent(this, ClientService.class);
-        startService(intent);
+        ClientThread clientThread = new ClientThread(this);
+        clientThread.start();
     }
 
-    private void setMyReceiver(){
-        myReceiver=new MyReceiver();
-        IntentFilter intentFilter=new IntentFilter();
-        intentFilter.addAction(ClientService.SEND);
-        registerReceiver(myReceiver, intentFilter);
+    private BroadcastReceiver createBroadcastReceiver() {
+        return new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                updateResults(intent.getStringExtra("result"));
+            }
+        };
     }
 
-    private class MyReceiver extends BroadcastReceiver{
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.i("DEBUG", "receiver got messs");
-            String message=intent.getStringExtra("DATA_PASS");
-            mess.setText(message);
+    private void updateResults(String text)
+    {
+        mess.setText(text);
+        Log.i("DEBUG", "message from server to send to activity: "+text);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (broadcastReceiver != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
         }
+        super.onDestroy();
     }
-
 }

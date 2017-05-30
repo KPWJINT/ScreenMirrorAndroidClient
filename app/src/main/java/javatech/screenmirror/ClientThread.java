@@ -1,5 +1,8 @@
 package javatech.screenmirror;
 
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -12,10 +15,15 @@ public class ClientThread extends Thread {
 
     private static final String DEBUG="debug";
     private static final int PORT =50268;
-    private static final String HOST="192.168.0.10";
+    private static final String HOST="172.16.11.83";
     private final int TIMEOUT = 1000;
     private Socket clientSocket =null;
-    static String MESS_FROM_SERVER=null;
+    private Context context;
+
+    public ClientThread(Context context)
+    {
+        this.context = context;
+    }
 
     @Override
     public void run() {
@@ -28,9 +36,6 @@ public class ClientThread extends Thread {
         }
     }
 
-    private void closeClient() throws IOException {
-            clientSocket.close();
-    }
 
     private void createClientSocket(int timeout) throws IOException {
         if(clientSocket==null) {
@@ -40,8 +45,18 @@ public class ClientThread extends Thread {
 
     private void runClientSocket() throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        MESS_FROM_SERVER = bufferedReader.readLine();
-        bufferedReader.close();
+        String messegeFromServer = bufferedReader.readLine();
 
+        Intent intent = new Intent("com.javatech.screenshot");
+        intent.putExtra("result", messegeFromServer);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+        bufferedReader.close();
     }
+
+    private void closeClient() throws IOException {
+        clientSocket.close();
+    }
+
+
 }
