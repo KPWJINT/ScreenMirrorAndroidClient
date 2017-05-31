@@ -13,8 +13,8 @@ import java.net.Socket;
 public class ClientThread extends Thread {
 
     private static final int PORT =81;
-    private static final String HOST="192.168.1.4"; //172.16.11.83
-    private final int TIMEOUT = 1000;
+    private static final String HOST="172.16.11.83"; //172.16.11.83
+    private final int TIMEOUT = 20;
 
     private Socket clientSocket =null;
     private Context context;
