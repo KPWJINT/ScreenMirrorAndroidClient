@@ -2,6 +2,8 @@ package javatech.screenmirror;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.content.LocalBroadcastManager;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -13,7 +15,7 @@ import java.net.Socket;
 public class ClientThread extends Thread {
 
     private static final int PORT =81;
-    private static final String HOST="192.168.43.70"; //172.16.11.83
+    private static final String HOST="192.168.1.129"; //172.16.11.83
     private final int TIMEOUT = 20;
 
     private Socket clientSocket =null;
@@ -55,6 +57,8 @@ public class ClientThread extends Thread {
 
     private void runClientSocket() throws IOException, InterruptedException
     {
+        long startTime = System.currentTimeMillis();
+
         clientSocket = new Socket(HOST, PORT);
 
         DataInputStream dis = new DataInputStream(clientSocket.getInputStream());
@@ -70,8 +74,9 @@ public class ClientThread extends Thread {
         if(screenshotInByte != null)
             broadcastDataToUI(screenshotInByte);
 
-
-//        Thread.sleep(TIMEOUT);
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        System.out.println(elapsedTime);
     }
 
 
