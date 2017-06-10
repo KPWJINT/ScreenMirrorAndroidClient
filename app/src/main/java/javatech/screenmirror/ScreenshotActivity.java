@@ -27,15 +27,20 @@ public class ScreenshotActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_screenshot);
 
-        host =savedInstanceState.getString("HOST");
+        host = getIntent().getExtras().getString("HOST");
 
         broadcastReceiver = createBroadcastReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("com.javatech.screenshot"));
 
         //remove
-        imageViewScreenshot.setImageResource(R.drawable.icon4);
+//        imageViewScreenshot.setImageResource(R.drawable.icon4);
+        startClientThread(host);
+    }
 
+    private void startClientThread(String host)
+    {
         clientThread = new ClientThread(this, host);
+        clientThread.setDaemon(true);
         clientThread.start();
     }
 
