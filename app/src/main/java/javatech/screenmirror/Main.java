@@ -1,6 +1,5 @@
 package javatech.screenmirror;
 
-
 import android.app.Activity;
 
 import android.content.BroadcastReceiver;
@@ -10,9 +9,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,15 +23,15 @@ public class Main extends Activity {
     @BindView(R.id.buttonConnect)
     Button buttonConnect;
 
-
     @BindView(R.id.buttonDisconnect)
     TextView buttonDisconnect;
 
     @BindView(R.id.imageViewScreenshot)
     ImageView imageViewScreenshot;
 
-    BroadcastReceiver broadcastReceiver;
-    ClientThread clientThread = null;
+    private BroadcastReceiver broadcastReceiver;
+    private ClientThread clientThread = null;
+    private String host;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +60,7 @@ public class Main extends Activity {
         if(clientThread == null)
         {
             startConnection();
-        }else if(!clientThread.isActive())
+        }else
         {
             clientThread.resumeClient();
         }
@@ -76,7 +73,7 @@ public class Main extends Activity {
     }
 
     private void startConnection(){
-        clientThread = new ClientThread(this);
+        clientThread = new ClientThread(this, host);
         clientThread.start();
     }
 

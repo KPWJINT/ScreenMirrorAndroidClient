@@ -15,17 +15,17 @@ import java.net.Socket;
 public class ClientThread extends Thread {
 
     private static final int PORT =81;
-    private static final String HOST="192.168.1.129"; //172.16.11.83
-    private final int TIMEOUT = 20;
 
     private Socket clientSocket =null;
     private Context context;
+    private String host;
 
     private boolean isActive = true;
 
-    public ClientThread(Context context)
+    public ClientThread(Context context, String host)
     {
         this.context = context;
+        this.host = host;
     }
 
     public boolean isActive()
@@ -59,7 +59,7 @@ public class ClientThread extends Thread {
     {
         long startTime = System.currentTimeMillis();
 
-        clientSocket = new Socket(HOST, PORT);
+        clientSocket = new Socket(host, PORT);
 
         DataInputStream dis = new DataInputStream(clientSocket.getInputStream());
         byte[] screenshotInByte = null;
