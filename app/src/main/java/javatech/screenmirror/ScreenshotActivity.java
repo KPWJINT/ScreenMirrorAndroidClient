@@ -27,11 +27,16 @@ public class ScreenshotActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_screenshot);
 
+        host =savedInstanceState.getString("HOST");
+
         broadcastReceiver = createBroadcastReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("com.javatech.screenshot"));
 
         //remove
         imageViewScreenshot.setImageResource(R.drawable.icon4);
+
+        clientThread = new ClientThread(this, host);
+        clientThread.start();
     }
 
     private BroadcastReceiver createBroadcastReceiver() {
@@ -60,6 +65,7 @@ public class ScreenshotActivity extends Activity {
         if (broadcastReceiver != null) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
         }
+        clientThread.stopClient();
         super.onDestroy();
     }
 }

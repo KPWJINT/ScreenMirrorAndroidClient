@@ -26,35 +26,10 @@ public class Main extends Activity {
     @BindView(R.id.buttonDisconnect)
     TextView buttonDisconnect;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
     }
-
-//    @OnClick(R.id.buttonConnect)
-//    public void connect(){
-//        if(clientThread == null)
-//        {
-//            startConnection();
-//        }else
-//        {
-//            clientThread.resumeClient();
-//        }
-//    }
-
-//    @OnClick(R.id.buttonDisconnect)
-//    public void disconnect(){
-//        if(clientThread != null)
-//            clientThread.stopClient();
-//    }
-
-//    private void startConnection(){
-//        clientThread = new ClientThread(this, host);
-//        clientThread.start();
-//    }
-
-
 }
