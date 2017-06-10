@@ -77,7 +77,6 @@ public class Main extends Activity {
         clientThread.start();
     }
 
-
     private void updateResults(byte[] screenshotInByte)
     {
         long startTime = System.currentTimeMillis();
