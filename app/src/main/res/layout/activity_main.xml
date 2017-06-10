@@ -16,16 +16,16 @@
             android:orientation="vertical">
 
             <Button
+                android:id="@+id/buttonChangeIP"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="change_IP" />
+
+            <Button
                 android:id="@+id/buttonConnect"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/connectButton" />
-
-            <Button
-                android:id="@+id/buttonDisconnect"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="disconnect" />
 
         </LinearLayout>
 
