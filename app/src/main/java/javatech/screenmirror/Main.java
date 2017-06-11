@@ -2,36 +2,76 @@ package javatech.screenmirror;
 
 import android.app.Activity;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class Main extends Activity {
 
-    @BindView(R.id.buttonConnect)
-    Button buttonConnect;
+    public static final String MY_PREFERENCES = "MyPrefs" ;
+    public static final String HOST_PREF_NAME = "HOST";
+    public static final String NO_HOST_VALUE = "No host address";
+    private SharedPreferences sharedPreferences;
 
-    @BindView(R.id.buttonDisconnect)
-    TextView buttonDisconnect;
+    @OnClick(R.id.buttonChangeIP)
+    public void changeIP(View view) {
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(this);
+        View mView = layoutInflaterAndroid.inflate(R.layout.ip_input_dialog_box, null);
+        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(this);
+        alertDialogBuilderUserInput.setView(mView);
 
-    @BindView(R.id.imageViewScreenshot)
-    ImageView imageViewScreenshot;
+        final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
 
-    private BroadcastReceiver broadcastReceiver;
-    private ClientThread clientThread = null;
-    private String host;
+        alertDialogBuilderUserInput
+                .setCancelable(false)
+                .setPositiveButton("Change IP", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogBox, int id) {
+                        String host = userInputDialogEditText.getText().toString();
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString(HOST_PREF_NAME, host);
+                        editor.commit();
+
+                        Toast.makeText(Main.this, "New IP = " + host, Toast.LENGTH_SHORT).show();
+                    }
+                })
+
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogBox, int id) {
+                                dialogBox.cancel();
+                            }
+                        });
+
+        AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+        alertDialogAndroid.show();
+    }
+
+    @OnClick(R.id.buttonConnect)
+    public void connect(View view) {
+        Intent screenshotActivityIntent = new Intent(this, ScreenshotActivity.class);
+
+        String host = sharedPreferences.getString(HOST_PREF_NAME, NO_HOST_VALUE);
+        if(host == NO_HOST_VALUE)
+            Toast.makeText(Main.this, "Please set IP address", Toast.LENGTH_SHORT).show();
+        else
+        {
+            Bundle hostBundle = new Bundle();
+            hostBundle.putString(HOST_PREF_NAME, host);
+            screenshotActivityIntent.putExtras(hostBundle);
+
+            startActivity(screenshotActivityIntent);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,62 +79,6 @@ public class Main extends Activity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        broadcastReceiver = createBroadcastReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("com.javatech.screenshot"));
-
-        //remove
-        imageViewScreenshot.setImageResource(R.drawable.icon4);
-    }
-
-    private BroadcastReceiver createBroadcastReceiver() {
-        return new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                updateResults(intent.getByteArrayExtra("result"));
-            }
-        };
-    }
-
-    @OnClick(R.id.buttonConnect)
-    public void connect(){
-        if(clientThread == null)
-        {
-            startConnection();
-        }else
-        {
-            clientThread.resumeClient();
-        }
-    }
-
-    @OnClick(R.id.buttonDisconnect)
-    public void disconnect(){
-        if(clientThread != null)
-            clientThread.stopClient();
-    }
-
-    private void startConnection(){
-        clientThread = new ClientThread(this, host);
-        clientThread.start();
-    }
-
-
-    private void updateResults(byte[] screenshotInByte)
-    {
-        long startTime = System.currentTimeMillis();
-
-        Bitmap bitmap = BitmapFactory.decodeByteArray(screenshotInByte, 0, screenshotInByte.length);
-        imageViewScreenshot.setImageBitmap(bitmap);
-
-        long stopTime = System.currentTimeMillis();
-        long elapsedTime = stopTime - startTime;
-        System.out.println(elapsedTime);
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (broadcastReceiver != null) {
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
-        }
-        super.onDestroy();
+        sharedPreferences = getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
     }
 }

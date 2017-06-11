@@ -2,14 +2,9 @@ package javatech.screenmirror;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v4.content.LocalBroadcastManager;
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.net.Socket;
 
 public class ClientThread extends Thread {
@@ -57,8 +52,6 @@ public class ClientThread extends Thread {
 
     private void runClientSocket() throws IOException, InterruptedException
     {
-        long startTime = System.currentTimeMillis();
-
         clientSocket = new Socket(host, PORT);
 
         DataInputStream dis = new DataInputStream(clientSocket.getInputStream());
@@ -73,10 +66,6 @@ public class ClientThread extends Thread {
 
         if(screenshotInByte != null)
             broadcastDataToUI(screenshotInByte);
-
-        long stopTime = System.currentTimeMillis();
-        long elapsedTime = stopTime - startTime;
-        System.out.println(elapsedTime);
     }
 
 
