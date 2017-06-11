@@ -2,14 +2,9 @@ package javatech.screenmirror;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v4.content.LocalBroadcastManager;
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.net.Socket;
 
 public class ClientThread extends Thread {

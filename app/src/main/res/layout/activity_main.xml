@@ -28,8 +28,6 @@
                 android:text="@string/connectButton" />
 
         </LinearLayout>
-
     </ScrollView>
-
 
 </LinearLayout>

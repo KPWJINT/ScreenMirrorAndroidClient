@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.ImageView;
 
+import butterknife.ButterKnife;
 import butterknife.BindView;
 
 public class ScreenshotActivity extends Activity {
@@ -26,14 +27,12 @@ public class ScreenshotActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_screenshot);
-
+        ButterKnife.bind(this);
         host = getIntent().getExtras().getString("HOST");
 
         broadcastReceiver = createBroadcastReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("com.javatech.screenshot"));
 
-        //remove
-//        imageViewScreenshot.setImageResource(R.drawable.icon4);
         startClientThread(host);
     }
 
