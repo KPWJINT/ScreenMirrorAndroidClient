@@ -73,7 +73,7 @@ public class ClientThread extends Thread {
 
     private void runClientSocket() throws IOException, InterruptedException
     {
-        byte[] screenshotInByte = new byte[1024];
+        byte[] screenshotInByte = new byte[30000];
         DatagramPacket receivePacket = new DatagramPacket(screenshotInByte, screenshotInByte.length);
         clientSocket.receive(receivePacket);
 
