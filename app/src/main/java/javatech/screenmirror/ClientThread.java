@@ -3,6 +3,8 @@ package javatech.screenmirror;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
+
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -41,6 +43,7 @@ public class ClientThread extends Thread {
     @Override
     public void run() {
         try {
+            clientSocket = new Socket(host, PORT);
             while(isActive)
                 runClientSocket();
         } catch (IOException e) {
@@ -52,9 +55,8 @@ public class ClientThread extends Thread {
 
     private void runClientSocket() throws IOException, InterruptedException
     {
-        clientSocket = new Socket(host, PORT);
+        DataInputStream dis = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
 
-        DataInputStream dis = new DataInputStream(clientSocket.getInputStream());
         byte[] screenshotInByte = null;
         int length = dis.readInt();                    // read length of incoming message
         if(length>0)
@@ -62,12 +64,9 @@ public class ClientThread extends Thread {
             screenshotInByte = new byte[length];
             dis.readFully(screenshotInByte, 0, screenshotInByte.length); // read the message
         }
-        dis.close();
-
         if(screenshotInByte != null)
             broadcastDataToUI(screenshotInByte);
     }
-
 
     private void broadcastDataToUI(byte[] data)
     {
