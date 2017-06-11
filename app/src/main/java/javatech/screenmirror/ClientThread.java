@@ -3,15 +3,21 @@ package javatech.screenmirror;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.Socket;
 
 public class ClientThread extends Thread {
 
     private static final int PORT =81;
 
-    private Socket clientSocket =null;
+    private DatagramSocket clientSocket =null;
     private Context context;
     private String host;
 
@@ -52,22 +58,34 @@ public class ClientThread extends Thread {
 
     private void runClientSocket() throws IOException, InterruptedException
     {
-        clientSocket = new Socket(host, PORT);
+        String sendMessege = "Hello server";
+        byte[] sendMessegeInByte =sendMessege.getBytes();
+        InetAddress IPAddress = InetAddress.getByName(host);
+        clientSocket = new DatagramSocket();
 
-        DataInputStream dis = new DataInputStream(clientSocket.getInputStream());
-        byte[] screenshotInByte = null;
-        int length = dis.readInt();                    // read length of incoming message
-        if(length>0)
-        {
-            screenshotInByte = new byte[length];
-            dis.readFully(screenshotInByte, 0, screenshotInByte.length); // read the message
-        }
-        dis.close();
+        DatagramPacket sendPacket = new DatagramPacket(sendMessegeInByte, sendMessegeInByte.length, IPAddress,PORT);
 
-        if(screenshotInByte != null)
-            broadcastDataToUI(screenshotInByte);
+        clientSocket.send(sendPacket);
+
+
+        byte[] receiveMessege = new byte[1024];
+        DatagramPacket receivePacket = new DatagramPacket(receiveMessege, receiveMessege.length);
+        clientSocket.receive(receivePacket);
+
+        Log.d("Tag" , new String(receiveMessege, 0, receiveMessege.length));
+
+        clientSocket.close();
+//        byte[] receiveData = new byte[1024];
+//        DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+//
+//        clientSocket.receive(receivePacket);
+//        byte[] screenshotInByte = receivePacket.getData();
+//
+//        if(screenshotInByte != null)
+//            broadcastDataToUI(screenshotInByte);
+//
+//        clientSocket.close();
     }
-
 
     private void broadcastDataToUI(byte[] data)
     {
