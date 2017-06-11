@@ -52,8 +52,6 @@ public class ClientThread extends Thread {
 
     private void runClientSocket() throws IOException, InterruptedException
     {
-        long startTime = System.currentTimeMillis();
-
         clientSocket = new Socket(host, PORT);
 
         DataInputStream dis = new DataInputStream(clientSocket.getInputStream());
@@ -68,10 +66,6 @@ public class ClientThread extends Thread {
 
         if(screenshotInByte != null)
             broadcastDataToUI(screenshotInByte);
-
-        long stopTime = System.currentTimeMillis();
-        long elapsedTime = stopTime - startTime;
-        System.out.println(elapsedTime);
     }
 
 

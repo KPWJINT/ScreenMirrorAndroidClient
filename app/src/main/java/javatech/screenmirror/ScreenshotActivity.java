@@ -54,14 +54,8 @@ public class ScreenshotActivity extends Activity {
 
     private void updateResults(byte[] screenshotInByte)
     {
-        long startTime = System.currentTimeMillis();
-
         Bitmap bitmap = BitmapFactory.decodeByteArray(screenshotInByte, 0, screenshotInByte.length);
         imageViewScreenshot.setImageBitmap(bitmap);
-
-        long stopTime = System.currentTimeMillis();
-        long elapsedTime = stopTime - startTime;
-        System.out.println(elapsedTime);
     }
 
     @Override
