@@ -47,6 +47,7 @@ public class ClientThread extends Thread {
     @Override
     public void run() {
         try {
+            connectToServer();
             while(isActive)
                 runClientSocket();
         } catch (IOException e) {
@@ -54,37 +55,30 @@ public class ClientThread extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        clientSocket.close();
     }
 
-    private void runClientSocket() throws IOException, InterruptedException
+    private void connectToServer() throws IOException
     {
         String sendMessege = "Hello server";
         byte[] sendMessegeInByte =sendMessege.getBytes();
         InetAddress IPAddress = InetAddress.getByName(host);
         clientSocket = new DatagramSocket();
+        clientSocket.connect(IPAddress, PORT);
 
-        DatagramPacket sendPacket = new DatagramPacket(sendMessegeInByte, sendMessegeInByte.length, IPAddress,PORT);
+        DatagramPacket sendPacket = new DatagramPacket(sendMessegeInByte, sendMessegeInByte.length);
 
         clientSocket.send(sendPacket);
+    }
 
-
-        byte[] receiveMessege = new byte[1024];
-        DatagramPacket receivePacket = new DatagramPacket(receiveMessege, receiveMessege.length);
+    private void runClientSocket() throws IOException, InterruptedException
+    {
+        byte[] screenshotInByte = new byte[1024];
+        DatagramPacket receivePacket = new DatagramPacket(screenshotInByte, screenshotInByte.length);
         clientSocket.receive(receivePacket);
 
-        Log.d("Tag" , new String(receiveMessege, 0, receiveMessege.length));
-
-        clientSocket.close();
-//        byte[] receiveData = new byte[1024];
-//        DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-//
-//        clientSocket.receive(receivePacket);
-//        byte[] screenshotInByte = receivePacket.getData();
-//
-//        if(screenshotInByte != null)
-//            broadcastDataToUI(screenshotInByte);
-//
-//        clientSocket.close();
+        if(screenshotInByte != null)
+            broadcastDataToUI(screenshotInByte);
     }
 
     private void broadcastDataToUI(byte[] data)
