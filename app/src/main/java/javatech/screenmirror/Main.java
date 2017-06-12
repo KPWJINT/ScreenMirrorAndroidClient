@@ -31,7 +31,14 @@ public class Main extends Activity {
         alertDialogBuilderUserInput.setView(mView);
 
         final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
-
+        String host = sharedPreferences.getString(HOST_PREF_NAME, NO_HOST_VALUE);
+        if(host == NO_HOST_VALUE)
+        {
+            userInputDialogEditText.setText("No IP saved");
+        }else
+        {
+            userInputDialogEditText.setText(host);
+        }
         alertDialogBuilderUserInput
                 .setCancelable(false)
                 .setPositiveButton("Change IP", new DialogInterface.OnClickListener() {
