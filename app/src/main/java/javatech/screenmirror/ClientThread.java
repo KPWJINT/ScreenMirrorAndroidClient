@@ -8,10 +8,11 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class ClientThread extends Thread {
 
-    private static final int PORT =81;
+    private static final int PORT =50243;
 
     private Socket clientSocket =null;
     private Context context;
@@ -50,6 +51,9 @@ public class ClientThread extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -64,6 +68,7 @@ public class ClientThread extends Thread {
             screenshotInByte = new byte[length];
             dis.readFully(screenshotInByte, 0, screenshotInByte.length); // read the message
         }
+
         if(screenshotInByte != null)
             broadcastDataToUI(screenshotInByte);
     }

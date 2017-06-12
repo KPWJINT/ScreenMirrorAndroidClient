@@ -32,13 +32,6 @@ public class ScreenshotActivity extends Activity {
 
         broadcastReceiver = createBroadcastReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("com.javatech.screenshot"));
-
-//        startClientThread(host);
-    }
-
-    private void startClientThread(String host)
-    {
-       startClientThread();
     }
 
     private BroadcastReceiver createBroadcastReceiver() {
@@ -68,6 +61,11 @@ public class ScreenshotActivity extends Activity {
     {
         java.lang.Thread.activeCount();
         clientThread.stopClient();
+        try {
+            clientThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         super.onPause();
     }
 
