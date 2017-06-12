@@ -3,7 +3,6 @@ package javatech.screenmirror;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -14,9 +13,10 @@ public class ClientThread extends Thread {
 
     private static final int PORT =50243;
 
-    private Socket clientSocket =null;
     private Context context;
     private String host;
+    private Socket clientSocket =null;
+    private DataInputStream dis;
 
     private boolean isActive = true;
 
@@ -44,39 +44,58 @@ public class ClientThread extends Thread {
     @Override
     public void run() {
         try {
-            clientSocket = new Socket(host, PORT);
+            createSocket();
+            createInputStream();
             while(isActive)
-                runClientSocket();
+                broadcastDataToUI(getScreenshotFromInputStream());
             clientSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (SocketException e) {
+            System.out.println("run - SocketException");
         } catch (Exception e){
             e.printStackTrace();
         }
     }
 
-    private void runClientSocket() throws IOException, InterruptedException
+    private void createSocket() throws Exception
     {
-        DataInputStream dis = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
+            clientSocket = new Socket(host, PORT);
+    }
 
-        byte[] screenshotInByte = null;
-        int length = dis.readInt();                    // read length of incoming message
-        if(length>0)
+    private void createInputStream() throws IOException {
+        try {
+            dis = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
+        }catch(Exception e)
         {
-            screenshotInByte = new byte[length];
-            dis.readFully(screenshotInByte, 0, screenshotInByte.length); // read the message
+            clientSocket.close();
         }
 
-        if(screenshotInByte != null)
-            broadcastDataToUI(screenshotInByte);
+    }
+
+    private byte[] getScreenshotFromInputStream()
+    {
+        byte[] screenshotInByte = null;
+        try
+        {
+            int length = dis.readInt();                                     // read length of incoming message
+            if(length>0)
+            {
+                screenshotInByte = new byte[length];
+                dis.readFully(screenshotInByte, 0, screenshotInByte.length); // read the message
+            }
+        }catch (IOException e)
+        {
+            System.out.println("getScreenshotFromInputStream - IOExcpetion");
+        }
+        return screenshotInByte;
     }
 
     private void broadcastDataToUI(byte[] data)
     {
-        Intent intent = new Intent("com.javatech.screenshot");
-        intent.putExtra("result", data);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        if(data != null)
+        {
+            Intent intent = new Intent("com.javatech.screenshot");
+            intent.putExtra("screenshot", data);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        }
     }
 }

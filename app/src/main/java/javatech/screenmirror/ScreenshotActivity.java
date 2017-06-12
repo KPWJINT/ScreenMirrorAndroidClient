@@ -38,7 +38,7 @@ public class ScreenshotActivity extends Activity {
         return new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                updateResults(intent.getByteArrayExtra("result"));
+                updateResults(intent.getByteArrayExtra("screenshot"));
             }
         };
     }
