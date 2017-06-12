@@ -38,9 +38,7 @@ public class ScreenshotActivity extends Activity {
 
     private void startClientThread(String host)
     {
-        clientThread = new ClientThread(this, host);
-        clientThread.setDaemon(true);
-        clientThread.start();
+       startClientThread();
     }
 
     private BroadcastReceiver createBroadcastReceiver() {
@@ -59,6 +57,21 @@ public class ScreenshotActivity extends Activity {
     }
 
     @Override
+    protected void onResume()
+    {
+        super.onResume();
+        startClientThread();
+    }
+
+    @Override
+    protected void onPause()
+    {
+        java.lang.Thread.activeCount();
+        clientThread.stopClient();
+        super.onPause();
+    }
+
+    @Override
     protected void onDestroy() {
         if (broadcastReceiver != null) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
@@ -66,4 +79,12 @@ public class ScreenshotActivity extends Activity {
         clientThread.stopClient();
         super.onDestroy();
     }
+
+    private void startClientThread()
+    {
+        clientThread = new ClientThread(this, host);
+        clientThread.setDaemon(true);
+        clientThread.start();
+    }
+
 }
