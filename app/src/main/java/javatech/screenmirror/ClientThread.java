@@ -46,10 +46,10 @@ public class ClientThread extends Thread {
             clientSocket = new Socket(host, PORT);
             while(isActive)
                 runClientSocket();
+            clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 

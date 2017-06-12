@@ -33,7 +33,7 @@ public class ScreenshotActivity extends Activity {
         broadcastReceiver = createBroadcastReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("com.javatech.screenshot"));
 
-        startClientThread(host);
+//        startClientThread(host);
     }
 
     private void startClientThread(String host)
