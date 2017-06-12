@@ -1,7 +1,6 @@
 package javatech.screenmirror;
 
 import android.app.Activity;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,7 +31,7 @@ public class Main extends Activity {
 
         final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
         String host = sharedPreferences.getString(HOST_PREF_NAME, NO_HOST_VALUE);
-        if(host == NO_HOST_VALUE)
+        if(host.equals(NO_HOST_VALUE))
         {
             userInputDialogEditText.setText("No IP saved");
         }else
@@ -68,7 +67,7 @@ public class Main extends Activity {
         Intent screenshotActivityIntent = new Intent(this, ScreenshotActivity.class);
 
         String host = sharedPreferences.getString(HOST_PREF_NAME, NO_HOST_VALUE);
-        if(host == NO_HOST_VALUE)
+        if(host.equals(NO_HOST_VALUE))
             Toast.makeText(Main.this, "Please set IP address", Toast.LENGTH_SHORT).show();
         else
         {
