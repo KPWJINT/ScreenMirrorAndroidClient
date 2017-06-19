@@ -44,11 +44,20 @@ public class ClientThread extends Thread {
     @Override
     public void run() {
         try {
-            createSocket();
-            createInputStream();
+//            createSocket();
+//            createInputStream();
             while(isActive)
+            {
+                createSocket();
+                createInputStream();
                 broadcastDataToUI(getScreenshotFromInputStream());
-            clientSocket.close();
+                clientSocket.close();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                };
+            }
         } catch (SocketException e) {
             System.out.println("run - SocketException");
         } catch (Exception e){
@@ -81,6 +90,7 @@ public class ClientThread extends Thread {
             {
                 screenshotInByte = new byte[length];
                 dis.readFully(screenshotInByte, 0, screenshotInByte.length); // read the message
+
             }
         }catch (IOException e)
         {
