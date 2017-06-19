@@ -43,26 +43,21 @@ public class ClientThread extends Thread {
 
     @Override
     public void run() {
-        try {
-//            createSocket();
-//            createInputStream();
+
             while(isActive)
             {
+                try {
                 createSocket();
                 createInputStream();
                 broadcastDataToUI(getScreenshotFromInputStream());
                 clientSocket.close();
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
+                sleepThread(100);
+                } catch (SocketException e) {
+                    System.out.println("run - SocketException");
+                } catch (Exception e){
                     e.printStackTrace();
-                };
+                }
             }
-        } catch (SocketException e) {
-            System.out.println("run - SocketException");
-        } catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
     private void createSocket() throws Exception
@@ -71,20 +66,13 @@ public class ClientThread extends Thread {
     }
 
     private void createInputStream() throws IOException {
-        try {
             dis = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
-        }catch(Exception e)
-        {
-            clientSocket.close();
-        }
-
     }
 
-    private byte[] getScreenshotFromInputStream()
+    private byte[] getScreenshotFromInputStream() throws IOException
     {
         byte[] screenshotInByte = null;
-        try
-        {
+
             int length = dis.readInt();                                     // read length of incoming message
             if(length>0)
             {
@@ -92,10 +80,7 @@ public class ClientThread extends Thread {
                 dis.readFully(screenshotInByte, 0, screenshotInByte.length); // read the message
 
             }
-        }catch (IOException e)
-        {
-            System.out.println("getScreenshotFromInputStream - IOExcpetion");
-        }
+
         return screenshotInByte;
     }
 
@@ -106,6 +91,15 @@ public class ClientThread extends Thread {
             Intent intent = new Intent("com.javatech.screenshot");
             intent.putExtra("screenshot", data);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        }
+    }
+
+    private void sleepThread(int milisec)
+    {
+        try {
+            Thread.sleep(milisec);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
