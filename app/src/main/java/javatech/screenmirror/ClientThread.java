@@ -50,8 +50,8 @@ public class ClientThread extends Thread {
                 createSocket();
                 createInputStream();
                 broadcastDataToUI(getScreenshotFromInputStream());
+                dis.close();
                 clientSocket.close();
-                sleepThread(100);
                 } catch (SocketException e) {
                     System.out.println("run - SocketException");
                 } catch (Exception e){
