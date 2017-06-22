@@ -1,14 +1,12 @@
 package javatech.screenmirror;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -33,11 +31,7 @@ public class Main extends Activity {
 
         final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
         String host = sharedPreferences.getString(HOST_PREF_NAME, NO_HOST_VALUE);
-        if(host.equals(NO_HOST_VALUE))
-        {
-            userInputDialogEditText.setText("No IP saved");
-        }else
-        {
+        if(!host.equals(NO_HOST_VALUE)){
             userInputDialogEditText.setText(host);
         }
         alertDialogBuilderUserInput
