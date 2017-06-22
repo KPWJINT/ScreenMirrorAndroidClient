@@ -1,12 +1,14 @@
 package javatech.screenmirror;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -39,27 +41,24 @@ public class Main extends Activity {
             userInputDialogEditText.setText(host);
         }
         alertDialogBuilderUserInput
-                .setCancelable(false)
-                .setPositiveButton("Change IP", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Save IP", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogBox, int id) {
-                        String host = userInputDialogEditText.getText().toString();
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString(HOST_PREF_NAME, host);
-                        editor.commit();
-
-                        Toast.makeText(Main.this, "New IP = " + host, Toast.LENGTH_SHORT).show();
+                        saveIP(userInputDialogEditText);
                     }
-                })
-
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialogBox, int id) {
-                                dialogBox.cancel();
-                            }
-                        });
+                });
 
         AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
         alertDialogAndroid.show();
+    }
+
+    private void saveIP(EditText userInputDialogEditText)
+    {
+        String host = userInputDialogEditText.getText().toString();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(HOST_PREF_NAME, host);
+        editor.commit();
+
+        Toast.makeText(Main.this, "New IP = " + host, Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.buttonConnect)

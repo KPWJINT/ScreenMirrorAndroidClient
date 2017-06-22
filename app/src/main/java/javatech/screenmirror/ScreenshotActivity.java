@@ -22,6 +22,7 @@ public class ScreenshotActivity extends Activity {
     private BroadcastReceiver broadcastReceiver;
     private ClientThread clientThread = null;
     private String host;
+    Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +46,7 @@ public class ScreenshotActivity extends Activity {
 
     private void updateResults(byte[] screenshotInByte)
     {
-        Bitmap bitmap = BitmapFactory.decodeByteArray(screenshotInByte, 0, screenshotInByte.length);
+        bitmap = BitmapFactory.decodeByteArray(screenshotInByte, 0, screenshotInByte.length);
         imageViewScreenshot.setImageBitmap(bitmap);
     }
 
