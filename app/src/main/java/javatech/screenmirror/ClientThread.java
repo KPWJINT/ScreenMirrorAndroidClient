@@ -6,12 +6,15 @@ import android.support.v4.content.LocalBroadcastManager;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 
 public class ClientThread extends Thread {
 
     private static final int PORT =50243;
+    private static final int CONNECTION_TIMEOUT = 1000;
+    private static final int SO_TIMEOUT = 1000;
 
     private Context context;
     private String host;
@@ -43,26 +46,27 @@ public class ClientThread extends Thread {
 
     @Override
     public void run() {
-
-            while(isActive)
-            {
-                try {
-                createSocket();
-                createInputStream();
-                broadcastDataToUI(getScreenshotFromInputStream());
-                dis.close();
-                clientSocket.close();
-                } catch (SocketException e) {
-                    System.out.println("run - SocketException");
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
+        while(isActive)
+        {
+            try {
+            createSocket();
+            createInputStream();
+            broadcastDataToUI(getScreenshotFromInputStream());
+            dis.close();
+            clientSocket.close();
+            } catch (SocketException e) {
+                System.out.println("run - SocketException");
+            } catch (Exception e){
+                e.printStackTrace();
             }
+        }
     }
 
     private void createSocket() throws Exception
     {
-            clientSocket = new Socket(host, PORT);
+        clientSocket = new Socket();
+        clientSocket.connect(new InetSocketAddress(host,PORT),CONNECTION_TIMEOUT);
+        clientSocket.setSoTimeout(SO_TIMEOUT);
     }
 
     private void createInputStream() throws IOException {
@@ -73,13 +77,14 @@ public class ClientThread extends Thread {
     {
         byte[] screenshotInByte = null;
 
-            int length = dis.readInt();                                     // read length of incoming message
-            if(length>0)
-            {
-                screenshotInByte = new byte[length];
-                dis.readFully(screenshotInByte, 0, screenshotInByte.length); // read the message
-
-            }
+        // read length of incoming message
+        int length = dis.readInt();
+        if(length>0)
+        {
+            // read the message
+            screenshotInByte = new byte[length];
+            dis.readFully(screenshotInByte, 0, screenshotInByte.length);
+        }
 
         return screenshotInByte;
     }
