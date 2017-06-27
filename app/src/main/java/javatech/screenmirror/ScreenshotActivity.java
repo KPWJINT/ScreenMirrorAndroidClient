@@ -85,5 +85,4 @@ public class ScreenshotActivity extends Activity {
         clientThread.setDaemon(true);
         clientThread.start();
     }
-
 }

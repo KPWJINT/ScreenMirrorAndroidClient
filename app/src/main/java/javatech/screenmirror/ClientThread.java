@@ -29,19 +29,9 @@ public class ClientThread extends Thread {
         this.host = host;
     }
 
-    public boolean isActive()
-    {
-        return isActive;
-    }
-
     public void stopClient()
     {
         isActive = false;
-    }
-
-    public void resumeClient()
-    {
-        isActive = true;
     }
 
     @Override
@@ -96,15 +86,6 @@ public class ClientThread extends Thread {
             Intent intent = new Intent("com.javatech.screenshot");
             intent.putExtra("screenshot", data);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-        }
-    }
-
-    private void sleepThread(int milisec)
-    {
-        try {
-            Thread.sleep(milisec);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 }
