@@ -8,7 +8,6 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
 
 public class ClientThread extends Thread {
 
@@ -44,15 +43,13 @@ public class ClientThread extends Thread {
             broadcastDataToUI(getScreenshotFromInputStream());
             dis.close();
             clientSocket.close();
-            } catch (SocketException e) {
-                System.out.println("run - SocketException");
-            } catch (Exception e){
-                e.printStackTrace();
+            } catch (IOException e) {
+                System.out.println("IOException");
             }
         }
     }
 
-    private void createSocket() throws Exception
+    private void createSocket() throws IOException
     {
         clientSocket = new Socket();
         clientSocket.connect(new InetSocketAddress(host,PORT),CONNECTION_TIMEOUT);
